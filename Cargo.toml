@@ -1,0 +1,74 @@
+[package]
+name = "ipa-parser"
+version = "1.0.0"
+edition = "2021"
+authors = ["Your Name"]
+description = "Blazing-fast IPA file parser for extracting metadata and icons"
+license = "MIT"
+
+[lib]
+name = "ipa_parser"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ipa-parser"
+path = "src/main.rs"
+
+[dependencies]
+# ZIP handling with optimizations
+zip = { version = "0.6", default-features = false, features = ["deflate"] }
+
+# Plist parsing (supports both XML and binary)
+plist = "1.6"
+
+# Image processing
+image = { version = "0.24", default-features = false, features = ["png"] }
+png = "0.17"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# CLI argument parsing
+clap = { version = "4.4", features = ["derive"] }
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Hashing
+md5 = "0.7"
+
+# Compression
+flate2 = "1.0"
+
+# Parallel processing
+rayon = "1.8"
+
+# Fast I/O
+memmap2 = "0.9"
+
+[profile.release]
+opt-level = 3                    # Maximum optimization
+lto = "fat"                      # Full link-time optimization
+codegen-units = 1                # Better optimization, slower compile
+strip = true                     # Strip symbols for smaller binary
+panic = "abort"                  # Smaller binary, faster panic
+overflow-checks = false          # Disable overflow checks in release
+
+[profile.release.package."*"]
+opt-level = 3
+
+# Ultra-fast build profile with CPU-specific optimizations
+[profile.ultra]
+inherits = "release"
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
+
+# Enable CPU-specific optimizations (use native CPU features)
+[build]
+rustflags = ["-C", "target-cpu=native"]
+
